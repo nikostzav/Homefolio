@@ -50,9 +50,9 @@ createdb -U postgres airbnbdb
 psql -U postgres -d airbnbdb -f db/schema.sql
 ```
 
-`db/schema.sql` creates all tables and seeds a demo account plus 11 sample listings (stock photos, no personal data), so the app is populated the moment you start it.
+`db/schema.sql` creates all tables and seeds a demo account plus 21 sample listings (stock photos, no personal data) owned by 7 seeded agent accounts, so the app is populated the moment you start it.
 
-**Demo login:** `demo_agent` / `password123`
+**Demo login:** `demo_agent` / `password123` — owns no listings itself; use it to browse, save, and message the seeded agents below. All seeded agents (`sarah.mitchell`, `michael.chen`, `david.thompson`, `priya.sharma`, `emily.rodriguez`, `james.anderson`, `olivia.bennett`) share the same password, so you can log in as two different accounts to try out real-time chat.
 
 ### 3. Configure environment variables
 

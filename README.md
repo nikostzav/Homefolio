@@ -32,4 +32,4 @@ Each half has its own setup instructions:
 1. [`backend/README.MD`](./backend/README.MD) — database setup (includes a one-command seed with demo data) and API server
 2. [`frontend/README.md`](./frontend/README.md) — the React dev server (start the backend first; nearly every page fetches from the API)
 
-**Demo login:** `demo_agent` / `password123`
+**Demo login:** `demo_agent` / `password123` — browses and saves listings, all of which are owned by seeded agents (e.g. `sarah.mitchell`, `michael.chen`, ...) who share the same password, so you can log in as two different accounts to try out real-time chat.
