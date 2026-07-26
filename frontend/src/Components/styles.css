@@ -1,0 +1,83 @@
+.custom-card:hover {
+    scale: 1.01;
+    transition: transform 1s ease-out;
+    cursor: pointer;
+}
+
+.card-title:hover {
+    scale: 1.05;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+}
+
+.marker-title:hover{
+    scale: 1.1;
+    transition: transform 1s ease-out;
+    cursor: pointer;
+}
+
+.message:hover {
+    scale: 1.05;
+    transition: transform 1s ease-out;
+    cursor: pointer;
+}
+
+.chatbox {
+    position: absolute;
+    margin-bottom: 5px;
+    bottom: 0;
+    height: 50%;
+    width: 30rem;
+    background-color: lightgray;
+    z-index: 1;
+}
+
+.navbar {
+    flex: 1;
+}
+
+.content {
+    flex: 7;
+}
+
+.input {
+    flex: 1;
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.popup {
+    position: absolute;
+    left: -450px;
+    right:200px;
+    margin-left: 100px;
+    top: 65px;
+    text-align: center;
+    width: '200px';
+    max-width: '200px';
+    display: inline-block;
+    border-radius: 10px;
+    border : 1px solid black;
+    background-color: lightgrey;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.popupelement { 
+    padding: 2px;
+    display: flex;
+    margin-left: 10px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    border: 1px solid white;
+    border-radius: 3px;
+}
+
+.popupelement:hover{
+    border:1px solid black;
+    border-radius: 3px;
+}
