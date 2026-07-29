@@ -11,10 +11,11 @@ const client = new pg.Pool({
   },
 });
 
-
-client
-  .connect()
-  .then(() => console.log("Connected to PostgreSQL"))
-  .catch((err) => console.error("PostgreSQL connection error:", err));
+// Neon (and Postgres generally) can close idle connections at any time -
+// e.g. Neon scaling to zero. Without this handler, an idle client erroring
+// out is an unhandled 'error' event, which crashes the whole process.
+client.on("error", (err) => {
+  console.error("Unexpected error on idle PostgreSQL client:", err);
+});
 
 export default client;
