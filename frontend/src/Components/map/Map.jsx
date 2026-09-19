@@ -39,6 +39,22 @@ function MapResizeHandler() {
   return null;
 }
 
+// Zoom to fit all currently listed properties, so searching for a city
+// frames that city instead of leaving the map on the whole country.
+function FitToMarkers({ data2 }) {
+  const map = useMap();
+  const key = (data2 || []).map((d) => d.id).join(",");
+  useEffect(() => {
+    const points = (data2 || [])
+      .filter((d) => d.latitude != null && d.longitude != null)
+      .map((d) => [Number(d.latitude), Number(d.longitude)]);
+    if (points.length === 0) return;
+    map.fitBounds(L.latLngBounds(points), { padding: [50, 50], maxZoom: 14 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return null;
+}
+
 const Map = ({ coords, data2 }) => {
   const [popupLocked, setPopupLocked] = useState(false); // State to lock the popup open when clicked
   const [openByHover, setOpenByHover] = useState(false); // State to track if popup was opened by hover
@@ -95,6 +111,7 @@ const Map = ({ coords, data2 }) => {
         />
         <SetViewOnClick coords={coords} />
         <MapResizeHandler />
+        <FitToMarkers data2={data2} />
         {data2
           ? data2.map((d) => {
               return (
