@@ -1,11 +1,25 @@
-.map{
+.map {
     width: 100%;
-    height: 92%;
+    height: 100%;
+    border-radius: 16px;
+}
+
+/* Keep the map a fixed, viewport-based size (and pinned while scrolling the
+   list) so it does not shrink when a search returns only a few results. */
+.list-map-panel {
+    height: 55vh;
     min-height: 320px;
+    margin: 12px 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(20, 30, 60, 0.12);
 }
 
 @media (min-width: 992px) {
-    .map {
-        min-height: 0;
+    .list-map-panel {
+        position: sticky;
+        top: 16px;
+        height: calc(100vh - 88px);
+        margin: 0;
     }
 }
