@@ -278,8 +278,8 @@ const List = () => {
           </div>
         </div>
 
-        <div className="col-12 col-lg-5 border bg-warning bg-opacity-25">
-          {renderMap(lat, long)}
+        <div className="col-12 col-lg-5">
+          <div className="list-map-panel">{renderMap(lat, long)}</div>
         </div>
       </div>
     </div>
