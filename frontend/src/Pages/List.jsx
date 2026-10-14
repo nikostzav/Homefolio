@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import ListCard from "../Components/ListCard";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { fuzzyTopsis } from "../utils/fuzzyTopsis";
 
 const List = () => {
   const location = useLocation();
@@ -107,76 +108,6 @@ const List = () => {
   useEffect(() => {
     handleFilter();
   }, [selectedCity, bedroom, minPrice, maxPrice, type, property, data2]);
-
-  // Normalize the data by dividing each value by the maximum value of the attribute
-  const normalize = (arr) => {
-    const max = Math.max(...arr);
-    return arr.map((value) => value / max);
-  }
-
-  function fuzzyTopsis(data, preferences) {
-    // Normalize the data for each attribute
-    const normalizedData = preferences.items.reduce((acc, item) => {
-      acc[item.key] = normalize(data.map((d) => d[item.key]));
-      
-      return acc;
-    }, {});
-    
-    // Ideal Best and Worst Values based on user preferences
-    const idealBest = preferences.items.reduce((acc, item) => {
-      acc[item.key] =
-        item.behavior === "min"
-          ? Math.min(...normalizedData[item.key])
-          : Math.max(...normalizedData[item.key]);
-      return acc;
-    }, {});
-
-    const idealWorst = preferences.items.reduce((acc, item) => {
-      acc[item.key] =
-        item.behavior === "min"
-          ? Math.max(...normalizedData[item.key])
-          : Math.min(...normalizedData[item.key]);
-      return acc;
-    }, {});
-
-    // Calculate distances to Ideal Best and Ideal Worst
-    const calculateDistance = (item, ideal) => {
-      return Math.sqrt(
-        preferences.items.reduce((sum, pref) => {
-          return sum + Math.pow(item[pref.key] - ideal[pref.key], 2);
-        }, 0)
-      );
-    };
-
-    const distances = data.map((item, index) => {
-      const normalizedItem = preferences.items.reduce((acc, pref) => {
-        acc[pref.key] = normalizedData[pref.key][index];
-        return acc;
-      }, {});
-
-      return {
-        ...item,
-        distanceToBest: calculateDistance(normalizedItem, idealBest),
-        distanceToWorst: calculateDistance(normalizedItem, idealWorst),
-      };
-    });
-
-
-    // Calculate Closeness and Rank the Properties
-    const calculateCloseness = (best, worst) => {
-      return worst / (best + worst);
-    };
-
-    return distances
-      .map((item) => ({
-        ...item,
-        closeness: calculateCloseness(
-          item.distanceToBest,
-          item.distanceToWorst
-        ),
-      }))
-      .sort((a, b) => b.closeness - a.closeness); // Sort by descending closeness
-  }
 
   // Apply ranking after filtering and preferences are ready
   useEffect(() => {
