@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import Map from "../Components/map/Map";
 import ListCard from "./ListCard";
-import { fuzzyTopsis } from "../utils/fuzzyTopsis";
+import { fuzzyTopsis, buildPreferenceItems } from "../utils/fuzzyTopsis";
 
 function FuzzyTOPSIS({
   setLat,
@@ -62,17 +62,10 @@ function FuzzyTOPSIS({
 
   useEffect(() => {
     if (userPreferences) {
-      const filterItems = () => {
-        const filteredItems = preferences.items.filter((item) => {
-          return userPreferences[item.key];
-        });
-        if(filteredItems.length > 0){
-        setPreferences({
-        
-          items: filteredItems,
-        });}
-      };
-      filterItems();
+      const items = buildPreferenceItems(userPreferences);
+      if (items.length > 0) {
+        setPreferences({ items });
+      }
     }
   }, [userPreferences, posts]);
 

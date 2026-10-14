@@ -153,9 +153,21 @@ CREATE TABLE public."UserCriteria" (
     id integer NOT NULL,
     user_id uuid,
     bedroom boolean DEFAULT false,
+    bedroom_weight character varying(10) DEFAULT 'medium',
     bathroom boolean DEFAULT false,
+    bathroom_weight character varying(10) DEFAULT 'medium',
     price boolean DEFAULT false,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    price_weight character varying(10) DEFAULT 'medium',
+    city boolean DEFAULT false,
+    city_weight character varying(10) DEFAULT 'medium',
+    preferred_city character varying(255),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "UserCriteria_weights_check" CHECK (
+        bedroom_weight IN ('low', 'medium', 'high', 'very_high')
+        AND bathroom_weight IN ('low', 'medium', 'high', 'very_high')
+        AND price_weight IN ('low', 'medium', 'high', 'very_high')
+        AND city_weight IN ('low', 'medium', 'high', 'very_high')
+    )
 );
 
 

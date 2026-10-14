@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import ListCard from "../Components/ListCard";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { fuzzyTopsis } from "../utils/fuzzyTopsis";
+import { fuzzyTopsis, buildPreferenceItems } from "../utils/fuzzyTopsis";
 
 const List = () => {
   const location = useLocation();
@@ -121,17 +121,10 @@ const List = () => {
 
   useEffect(() => {
     if (userPreferences) {
-      const filterItems = () => {
-        const filteredItems = preferences.items.filter((item) => {
-          return userPreferences[item.key];
-        });
-        if(filteredItems.length > 0){
-        setPreferences({
-        
-          items: filteredItems,
-        });}
-      };
-      filterItems();
+      const items = buildPreferenceItems(userPreferences);
+      if (items.length > 0) {
+        setPreferences({ items });
+      }
     }
   }, [userPreferences, filteredDataArr]);
 

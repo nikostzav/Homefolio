@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Change from "../Components/Change";
 import Navbar from "../Components/Navbar";
 import ChangeProfile from "../Components/ChangeProfile";
+import Preferences from "../Components/Preferences";
 
 function ProfileChange() {
   const navigate = useNavigate();
@@ -31,6 +32,11 @@ function ProfileChange() {
             </div>
             <div className="col-12 col-lg-5 border bg-warning bg-opacity-25">
               <ChangeProfile />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12">
+              <Preferences />
             </div>
           </div>
         </div>

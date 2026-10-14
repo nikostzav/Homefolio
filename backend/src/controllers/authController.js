@@ -27,13 +27,23 @@ export const register = async (req, res) => {
 
     const userId = userResult.rows[0].id
     if (criteria && typeof criteria === "object") {
-      const { bedroom, bathroom, price } = criteria;
+      const VALID_WEIGHTS = ["low", "medium", "high", "very_high"];
+      const normalizeWeight = (weight) => (VALID_WEIGHTS.includes(weight) ? weight : "medium");
+      const { bedroom, bedroomWeight, bathroom, bathroomWeight, price, priceWeight } = criteria;
 
       try {
         await client.query(
-          `INSERT INTO "UserCriteria" (user_id, bedroom, bathroom, price)
-       VALUES ($1, $2, $3, $4)`,
-          [userId, bedroom || false, bathroom || false, price || false]
+          `INSERT INTO "UserCriteria" (user_id, bedroom, bedroom_weight, bathroom, bathroom_weight, price, price_weight)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            userId,
+            bedroom || false,
+            normalizeWeight(bedroomWeight),
+            bathroom || false,
+            normalizeWeight(bathroomWeight),
+            price || false,
+            normalizeWeight(priceWeight),
+          ]
         );
       } catch (error) {
         console.error("Error inserting user preferences:", error);
