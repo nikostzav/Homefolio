@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import Map from "../Components/map/Map";
 import ListCard from "./ListCard";
 import { fuzzyTopsis, buildPreferenceItems } from "../utils/fuzzyTopsis";
 
 function FuzzyTOPSIS({
   setLat,
-  lat,
-  long,
   posts,
   setLong,
   userPreferences,
@@ -20,10 +17,6 @@ function FuzzyTOPSIS({
       { key: "bathroom", behavior: "max" }, // Maximize bathroom
     ],
   });
-  function renderMap(long, lat) {
-    return <Map coords={[long, lat]} data2={rankedData} />;
-  }
-
   function rankdata() {
     const ranked = fuzzyTopsis(posts, preferences);
     setRankedData(ranked);
@@ -71,7 +64,6 @@ function FuzzyTOPSIS({
           </div>
         ))}
       </div>
-      {renderMap(lat, long)}
     </div>
   );
 }

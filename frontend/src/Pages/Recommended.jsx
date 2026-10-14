@@ -128,9 +128,7 @@ const Recommendation = () => {
             <div>
               <FuzzyTOPSIS
                 setLat={setLat}
-                lat ={lat}
                 setLong={setLong}
-                long ={long}
                 posts={filterPosts}
                 userPreferences={userPreferences}
               />
