@@ -39,6 +39,16 @@ function MapResizeHandler() {
   return null;
 }
 
+// Listing coordinates come from the DB as free-form strings; a missing or
+// malformed one (empty string, non-numeric) makes Leaflet throw when it's
+// handed straight to a Marker/latLngBounds, which can silently drop the
+// whole batch of markers for that render instead of just the bad entry.
+const hasValidCoords = (d) =>
+  d.latitude != null &&
+  d.longitude != null &&
+  Number.isFinite(Number(d.latitude)) &&
+  Number.isFinite(Number(d.longitude));
+
 // Zoom to fit all currently listed properties, so searching for a city
 // frames that city instead of leaving the map on the whole country.
 function FitToMarkers({ data2 }) {
@@ -46,7 +56,7 @@ function FitToMarkers({ data2 }) {
   const key = (data2 || []).map((d) => d.id).join(",");
   useEffect(() => {
     const points = (data2 || [])
-      .filter((d) => d.latitude != null && d.longitude != null)
+      .filter(hasValidCoords)
       .map((d) => [Number(d.latitude), Number(d.longitude)]);
     if (points.length === 0) return;
     map.fitBounds(L.latLngBounds(points), { padding: [50, 50], maxZoom: 14 });
@@ -113,7 +123,7 @@ const Map = ({ coords, data2 }) => {
         <MapResizeHandler />
         <FitToMarkers data2={data2} />
         {data2
-          ? data2.map((d) => {
+          ? data2.filter(hasValidCoords).map((d) => {
               return (
                 <Marker
                   key={d.id}
