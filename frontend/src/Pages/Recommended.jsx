@@ -24,8 +24,6 @@ const Recommendation = () => {
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
   const [bedroom, setBedroom] = useState(1);
-  const [city, setCity] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
 
   useEffect(() => {
     if (!userId) navigate("/login");
@@ -79,20 +77,18 @@ const Recommendation = () => {
   // Always filter by type (rent/buy) before ranking - otherwise fuzzy TOPSIS
   // compares rental prices against purchase prices in the same pool, which
   // lets price swamp every other criterion regardless of its weight. City is
-  // also a hard filter, not just a ranking criterion: if the user picked a
-  // city in the dropdown above, that wins; otherwise fall back to their
-  // saved preferred city (when "Consider City" is on) so the recommended
-  // list only ever contains that city's listings.
+  // also a hard filter, not just a ranking criterion: the saved preferred
+  // city (when "Consider City" is on) is the single source of truth, so the
+  // recommended list only ever contains that city's listings.
   useEffect(() => {
-    const effectiveCity =
-      selectedCity || (userPreferences?.city ? userPreferences.preferred_city : "");
+    const effectiveCity = userPreferences?.city ? userPreferences.preferred_city : "";
     const filterData = posts.filter(
       (item) =>
         (!type || item.type === type) &&
         (!effectiveCity || item.city === effectiveCity)
     );
     setFilterPosts(filterData);
-  }, [posts, type, selectedCity, userPreferences]);
+  }, [posts, type, userPreferences]);
 
   return (
     <div className="container" style={{ minHeight: "100vh" }}>
@@ -116,7 +112,6 @@ const Recommendation = () => {
               long={long}
               setPosts={setPosts}
               type={type}
-              setSelectedCity={setSelectedCity}
               setType={setType}
               property={property}
               setProperty={setProperty}
@@ -126,8 +121,6 @@ const Recommendation = () => {
               setMaxPrice={setMaxPrice}
               bedroom={bedroom}
               setBedroom={setBedroom}
-              city={city}
-              setCity={setCity}
             />
             <div className="mt-3">
               <Preferences initialPreferences={userPreferences} onSaved={fetchPreferences} />
