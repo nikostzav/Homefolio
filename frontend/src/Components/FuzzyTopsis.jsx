@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import axios from "axios";
 import Map from "../Components/map/Map";
 import ListCard from "./ListCard";
 import { fuzzyTopsis, buildPreferenceItems } from "../utils/fuzzyTopsis";
@@ -10,12 +8,11 @@ function FuzzyTOPSIS({
   lat,
   long,
   posts,
-  setLong
+  setLong,
+  userPreferences,
 }) {
   const [rankedData, setRankedData] = useState([]);
-  const [user, setUser] = useState(localStorage.getItem("user"));
 
-  const [userPreferences, setUserPreferences] = useState();
   const [preferences, setPreferences] = useState({
     items: [
       { key: "price", behavior: "min" }, // Minimize price
@@ -27,38 +24,18 @@ function FuzzyTOPSIS({
     return <Map coords={[long, lat]} data2={rankedData} />;
   }
 
-  const id = JSON.parse(user).id;
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      const accessToken = Cookies.get("accessToken");
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/auth/preferences/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setUserPreferences(response.data); // Set state with fetched preferences
-      } catch (error) {
-        console.error("Error fetching preferences:", error);
-      }
-    };
-
-    fetchPreferences();
-  }, [id, posts]);
-
   function rankdata() {
     const ranked = fuzzyTopsis(posts, preferences);
     setRankedData(ranked);
   }
 
+  // Depends on `preferences` too, not just `posts` - otherwise saving new
+  // weights/criteria wouldn't re-rank until the post list itself changed.
   useEffect(() => {
     if (posts.length > 0) {
       rankdata();
     }
-  }, [posts]);
+  }, [posts, preferences]);
 
   useEffect(() => {
     if (userPreferences) {
@@ -67,7 +44,7 @@ function FuzzyTOPSIS({
         setPreferences({ items });
       }
     }
-  }, [userPreferences, posts]);
+  }, [userPreferences]);
 
   return (
     <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>

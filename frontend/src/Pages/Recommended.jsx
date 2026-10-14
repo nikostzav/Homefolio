@@ -2,12 +2,19 @@ import "../styles.css";
 import Navbar from "../Components/Navbar";
 import ProfileNavbar from "../Components/ProfileNavbar";
 import RecNavbar from "../Components/RecNavbar";
+import Preferences from "../Components/Preferences";
 import Map from "../Components/map/Map";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import FuzzyTOPSIS from "../Components/FuzzyTopsis";
 const Recommendation = () => {
+  const navigate = useNavigate();
+  const [user] = useState(localStorage.getItem("user"));
+  const userId = user ? JSON.parse(user).id : null;
+  const [userPreferences, setUserPreferences] = useState();
+
   const [lat, setLat] = useState(38.5);
   const [long, setLong] = useState(21.5);
   const [posts, setPosts] = useState([]);
@@ -19,6 +26,28 @@ const Recommendation = () => {
   const [bedroom, setBedroom] = useState(1);
   const [city, setCity] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+
+  useEffect(() => {
+    if (!userId) navigate("/login");
+  }, [userId]);
+
+  const fetchPreferences = async () => {
+    if (!userId) return;
+    const accessToken = Cookies.get("accessToken");
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/auth/preferences/${userId}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      setUserPreferences(response.data);
+    } catch (error) {
+      console.error("Error fetching preferences:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPreferences();
+  }, [userId]);
 
   function renderMap(long, lat) {
     return <Map coords={[long, lat]} data2={filterPosts} />;
@@ -94,6 +123,9 @@ const Recommendation = () => {
               city={city}
               setCity={setCity}
             />
+            <div className="mt-3">
+              <Preferences initialPreferences={userPreferences} onSaved={fetchPreferences} />
+            </div>
             <div>
               <FuzzyTOPSIS
                 setLat={setLat}
@@ -101,6 +133,7 @@ const Recommendation = () => {
                 setLong={setLong}
                 long ={long}
                 posts={filterPosts}
+                userPreferences={userPreferences}
               />
             </div>
           </div>

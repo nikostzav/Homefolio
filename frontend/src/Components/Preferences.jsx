@@ -21,7 +21,7 @@ const DEFAULT_STATE = {
   preferredCity: "",
 };
 
-function Preferences() {
+function Preferences({ initialPreferences, onSaved }) {
   const [user] = useState(localStorage.getItem("user"));
   const [state, setState] = useState(DEFAULT_STATE);
   const [cities, setCities] = useState([]);
@@ -33,33 +33,29 @@ function Preferences() {
     headers: { Authorization: `Bearer ${Cookies.get("accessToken")}` },
   });
 
+  // The parent page owns fetching (and refetching after a save), so the
+  // form just mirrors whatever it's handed - one GET, shared with the ranker.
   useEffect(() => {
-    if (!userId) return;
+    if (!initialPreferences) return;
+    setState({
+      price: !!initialPreferences.price,
+      priceWeight: initialPreferences.price_weight || "medium",
+      bedroom: !!initialPreferences.bedroom,
+      bedroomWeight: initialPreferences.bedroom_weight || "medium",
+      bathroom: !!initialPreferences.bathroom,
+      bathroomWeight: initialPreferences.bathroom_weight || "medium",
+      city: !!initialPreferences.city,
+      cityWeight: initialPreferences.city_weight || "medium",
+      preferredCity: initialPreferences.preferred_city || "",
+    });
+  }, [initialPreferences]);
 
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/auth/preferences/${userId}`, authHeaders())
-      .then((res) => {
-        setState({
-          price: !!res.data.price,
-          priceWeight: res.data.price_weight || "medium",
-          bedroom: !!res.data.bedroom,
-          bedroomWeight: res.data.bedroom_weight || "medium",
-          bathroom: !!res.data.bathroom,
-          bathroomWeight: res.data.bathroom_weight || "medium",
-          city: !!res.data.city,
-          cityWeight: res.data.city_weight || "medium",
-          preferredCity: res.data.preferred_city || "",
-        });
-      })
-      .catch(() => {
-        // No preferences saved yet - keep defaults.
-      });
-
+  useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/auth/getCities`, authHeaders())
       .then((res) => setCities(res.data))
       .catch((error) => console.error("Error fetching cities:", error));
-  }, [userId]);
+  }, []);
 
   const toggle = (key) => setState((prev) => ({ ...prev, [key]: !prev[key] }));
   const setField = (key, value) => setState((prev) => ({ ...prev, [key]: value }));
@@ -75,6 +71,7 @@ function Preferences() {
         authHeaders()
       );
       setStatus("saved");
+      onSaved?.();
     } catch (error) {
       console.error("Error saving preferences:", error);
       setStatus("error");
