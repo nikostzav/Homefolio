@@ -156,28 +156,21 @@ const NUMERIC_CRITERIA = [
 
 /**
  * Turns the UserCriteria row returned by the backend (booleans + linguistic
- * weights + an optional preferred city) into the `preferences.items` shape
- * `fuzzyTopsis` expects, including only the criteria the user opted into.
+ * weights) into the `preferences.items` shape `fuzzyTopsis` expects,
+ * including only the criteria the user opted into. City is deliberately
+ * excluded here: it's a hard filter applied before ranking (see
+ * Recommended.jsx), not a weighted criterion - by the time fuzzyTopsis runs,
+ * every alternative is already in the same city, so a city "weight" would be
+ * meaningless.
  */
 export function buildPreferenceItems(userPreferences) {
   if (!userPreferences) return [];
 
-  const items = NUMERIC_CRITERIA.filter(({ key }) => userPreferences[key]).map(
+  return NUMERIC_CRITERIA.filter(({ key }) => userPreferences[key]).map(
     ({ key, behavior }) => ({
       key,
       behavior,
       weight: userPreferences[`${key}_weight`],
     })
   );
-
-  if (userPreferences.city && userPreferences.preferred_city) {
-    items.push({
-      key: "city",
-      behavior: "match",
-      target: userPreferences.preferred_city,
-      weight: userPreferences.city_weight,
-    });
-  }
-
-  return items;
 }
