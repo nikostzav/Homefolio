@@ -24,10 +24,10 @@ function FuzzyTOPSIS({
 
   // Depends on `preferences` too, not just `posts` - otherwise saving new
   // weights/criteria wouldn't re-rank until the post list itself changed.
+  // Always runs, even when `posts` is empty - fuzzyTopsis([]) safely
+  // returns [], which clears stale cards instead of leaving old ones shown.
   useEffect(() => {
-    if (posts.length > 0) {
-      rankdata();
-    }
+    rankdata();
   }, [posts, preferences]);
 
   useEffect(() => {
