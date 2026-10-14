@@ -9,29 +9,6 @@ const RegisterUser = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [criteria, setCriteria] = useState({
-    bedroom: false,
-    bedroomWeight: "medium",
-    bathroom: false,
-    bathroomWeight: "medium",
-    price: false,
-    priceWeight: "medium",
-  });
-  const handleCriteriaChange = (key) => {
-    setCriteria((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-  const handleWeightChange = (key, value) => {
-    setCriteria((prev) => ({
-      ...prev,
-      [`${key}Weight`]: value,
-    }));
-  };
-
-  // Preferences
- ;
 
   const navigate = useNavigate();
 
@@ -49,7 +26,6 @@ const RegisterUser = () => {
         username,
         password,
         email,
-        criteria
       });
 
       if (!res.data.message) {
@@ -75,7 +51,7 @@ const RegisterUser = () => {
       <div className="container-fluid mt-5 d-flex justify-content-center flex-column gap-4 align-items-center">
           <div className="container d-flex flex-column gap-3" style={{ width: "100%", maxWidth: "420px" }}>
           <div className="h2">Create an Account</div>
-          
+
             <input
               className="form-control"
               type="text"
@@ -107,45 +83,7 @@ const RegisterUser = () => {
             {error && (
               <div className="alert alert-danger text-center">{error}</div>
             )}
-            
-          </div>
-      <div className="container d-flex flex-column gap-3" style={{ width: "100%", maxWidth: "420px" }}>
-          <div className="h5">Set Your Preferences</div>
-          {[
-            { key: "bedroom", label: "Consider Number of Bedrooms" },
-            { key: "bathroom", label: "Consider Number of Bathrooms" },
-            { key: "price", label: "Consider Price" },
-          ].map(({ key, label }) => (
-            <div key={key} className="d-flex align-items-center gap-2">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={key}
-                  checked={criteria[key]}
-                  onChange={() => handleCriteriaChange(key)}
-                />
-                <label className="form-check-label" htmlFor={key}>
-                  {label}
-                </label>
-              </div>
-              {criteria[key] && (
-                <select
-                  className="form-select form-select-sm"
-                  style={{ width: "auto" }}
-                  value={criteria[`${key}Weight`]}
-                  onChange={(e) => handleWeightChange(key, e.target.value)}
-                  aria-label={`${label} importance`}
-                >
-                  <option value="low">Low importance</option>
-                  <option value="medium">Medium importance</option>
-                  <option value="high">High importance</option>
-                  <option value="very_high">Very high importance</option>
-                </select>
-              )}
-            </div>
-          ))}
-          <button
+            <button
               className="btn btn-success"
               onClick={handleSubmit}
               disabled={loading}
@@ -157,7 +95,7 @@ const RegisterUser = () => {
                 <u>Already have an account?</u>
               </p>
             </Link>
-        </div>
+          </div>
     </div>
     </div>
   );
