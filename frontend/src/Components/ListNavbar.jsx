@@ -20,27 +20,9 @@ const ListNavbar = ({
   setSelectedCity,
 }) => {
   const [cities, setCities] = useState([]);
-  const [hasPreferences, setHasPreferences] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const id = user?.id;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (!id) return;
-      const accessToken = Cookies.get("accessToken");
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/auth/preferences/${id}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        setHasPreferences(!Object.values(response.data).every((v) => v === false));
-      } catch (error) {
-        console.error("Error fetching preferences:", error);
-      }
-    };
-    fetchPreferences();
-  }, [id]);
 
   const getCities = async () => {
     const accessToken = Cookies.get("accessToken");
@@ -66,7 +48,7 @@ const ListNavbar = ({
           Search Results for <b>{selectedCity || "All Cities"}</b>
         </div>
 
-        {hasPreferences && (
+        {id && (
           <button
             className="btn btn-success btn-sm d-flex align-items-center px-3 py-2 mb-3"
             onClick={() => navigate("/recommended")}
