@@ -17,7 +17,6 @@ const DEFAULT_STATE = {
   bathroom: false,
   bathroomWeight: "medium",
   city: false,
-  cityWeight: "medium",
   preferredCity: "",
 };
 
@@ -45,7 +44,6 @@ function Preferences({ initialPreferences, onSaved }) {
       bathroom: !!initialPreferences.bathroom,
       bathroomWeight: initialPreferences.bathroom_weight || "medium",
       city: !!initialPreferences.city,
-      cityWeight: initialPreferences.city_weight || "medium",
       preferredCity: initialPreferences.preferred_city || "",
     });
   }, [initialPreferences]);
@@ -85,7 +83,9 @@ function Preferences({ initialPreferences, onSaved }) {
       <div className="h5">Recommendation Preferences</div>
       <p className="text-muted" style={{ fontSize: "14px" }}>
         Pick which criteria matter to you and how much - this drives the
-        ranking on the Recommended and Listings pages.
+        ranking on the Recommended and Listings pages. City is a filter, not
+        a ranking weight: it limits results to that city rather than scoring
+        how closely they match.
       </p>
 
       {[
@@ -138,35 +138,20 @@ function Preferences({ initialPreferences, onSaved }) {
           </label>
         </div>
         {state.city && (
-          <>
-            <select
-              className="form-select form-select-sm"
-              style={{ width: "auto" }}
-              value={state.preferredCity}
-              onChange={(e) => setField("preferredCity", e.target.value)}
-              aria-label="Preferred city"
-            >
-              <option value="">Choose a city</option>
-              {cities.map((c, index) => (
-                <option key={index} value={c.city}>
-                  {c.city}
-                </option>
-              ))}
-            </select>
-            <select
-              className="form-select form-select-sm"
-              style={{ width: "auto" }}
-              value={state.cityWeight}
-              onChange={(e) => setField("cityWeight", e.target.value)}
-              aria-label="Consider City importance"
-            >
-              {WEIGHT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </>
+          <select
+            className="form-select form-select-sm"
+            style={{ width: "auto" }}
+            value={state.preferredCity}
+            onChange={(e) => setField("preferredCity", e.target.value)}
+            aria-label="Preferred city"
+          >
+            <option value="">Choose a city</option>
+            {cities.map((c, index) => (
+              <option key={index} value={c.city}>
+                {c.city}
+              </option>
+            ))}
+          </select>
         )}
       </div>
 
