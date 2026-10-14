@@ -11,13 +11,22 @@ const RegisterUser = () => {
   const [loading, setLoading] = useState(false);
   const [criteria, setCriteria] = useState({
     bedroom: false,
+    bedroomWeight: "medium",
     bathroom: false,
+    bathroomWeight: "medium",
     price: false,
+    priceWeight: "medium",
   });
   const handleCriteriaChange = (key) => {
     setCriteria((prev) => ({
       ...prev,
       [key]: !prev[key],
+    }));
+  };
+  const handleWeightChange = (key, value) => {
+    setCriteria((prev) => ({
+      ...prev,
+      [`${key}Weight`]: value,
     }));
   };
 
@@ -102,42 +111,40 @@ const RegisterUser = () => {
           </div>
       <div className="container d-flex flex-column gap-3" style={{ width: "100%", maxWidth: "420px" }}>
           <div className="h5">Set Your Preferences</div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="bedroom"
-              checked={criteria.bedroom}
-              onChange={() => handleCriteriaChange("bedroom")}
-            />
-            <label className="form-check-label" htmlFor="bedroom">
-              Consider Number of Bedrooms
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="bathroom"
-              checked={criteria.bathroom}
-              onChange={() => handleCriteriaChange("bathroom")}
-            />
-            <label className="form-check-label" htmlFor="bathroom">
-              Consider Number of Bathrooms
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="price"
-              checked={criteria.price}
-              onChange={() => handleCriteriaChange("price")}
-            />
-            <label className="form-check-label" htmlFor="price">
-              Consider Price
-            </label>
-          </div>
+          {[
+            { key: "bedroom", label: "Consider Number of Bedrooms" },
+            { key: "bathroom", label: "Consider Number of Bathrooms" },
+            { key: "price", label: "Consider Price" },
+          ].map(({ key, label }) => (
+            <div key={key} className="d-flex align-items-center gap-2">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={key}
+                  checked={criteria[key]}
+                  onChange={() => handleCriteriaChange(key)}
+                />
+                <label className="form-check-label" htmlFor={key}>
+                  {label}
+                </label>
+              </div>
+              {criteria[key] && (
+                <select
+                  className="form-select form-select-sm"
+                  style={{ width: "auto" }}
+                  value={criteria[`${key}Weight`]}
+                  onChange={(e) => handleWeightChange(key, e.target.value)}
+                  aria-label={`${label} importance`}
+                >
+                  <option value="low">Low importance</option>
+                  <option value="medium">Medium importance</option>
+                  <option value="high">High importance</option>
+                  <option value="very_high">Very high importance</option>
+                </select>
+              )}
+            </div>
+          ))}
           <button
               className="btn btn-success"
               onClick={handleSubmit}

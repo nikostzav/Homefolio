@@ -21,7 +21,7 @@ const Recommendation = () => {
   const [selectedCity, setSelectedCity] = useState("");
 
   function renderMap(long, lat) {
-    return <Map coords={[long, lat]} data2={filterPosts.length > 0 ? filterPosts : posts} />;
+    return <Map coords={[long, lat]} data2={filterPosts} />;
   }
 
   useEffect(() => {
@@ -47,15 +47,17 @@ const Recommendation = () => {
         console.error(error);
       });
   };
+  // Always filter by type (rent/buy) before ranking - otherwise fuzzy TOPSIS
+  // compares rental prices against purchase prices in the same pool, which
+  // lets price swamp every other criterion regardless of its weight.
   useEffect(() => {
-    if (selectedCity) {
-      const handleFilter = () => {
-        const filterData = posts.filter((item) => item.city === selectedCity);
-        setFilterPosts(filterData);
-      };
-      handleFilter();
-    }
-  }, [selectedCity]);
+    const filterData = posts.filter(
+      (item) =>
+        (!type || item.type === type) &&
+        (!selectedCity || item.city === selectedCity)
+    );
+    setFilterPosts(filterData);
+  }, [posts, type, selectedCity]);
 
   return (
     <div className="container" style={{ minHeight: "100vh" }}>
@@ -98,7 +100,7 @@ const Recommendation = () => {
                 lat ={lat}
                 setLong={setLong}
                 long ={long}
-                posts={filterPosts.length > 0 ? filterPosts : posts}
+                posts={filterPosts}
               />
             </div>
           </div>
