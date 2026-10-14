@@ -78,15 +78,21 @@ const Recommendation = () => {
   };
   // Always filter by type (rent/buy) before ranking - otherwise fuzzy TOPSIS
   // compares rental prices against purchase prices in the same pool, which
-  // lets price swamp every other criterion regardless of its weight.
+  // lets price swamp every other criterion regardless of its weight. City is
+  // also a hard filter, not just a ranking criterion: if the user picked a
+  // city in the dropdown above, that wins; otherwise fall back to their
+  // saved preferred city (when "Consider City" is on) so the recommended
+  // list only ever contains that city's listings.
   useEffect(() => {
+    const effectiveCity =
+      selectedCity || (userPreferences?.city ? userPreferences.preferred_city : "");
     const filterData = posts.filter(
       (item) =>
         (!type || item.type === type) &&
-        (!selectedCity || item.city === selectedCity)
+        (!effectiveCity || item.city === effectiveCity)
     );
     setFilterPosts(filterData);
-  }, [posts, type, selectedCity]);
+  }, [posts, type, selectedCity, userPreferences]);
 
   return (
     <div className="container" style={{ minHeight: "100vh" }}>
